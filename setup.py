@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup script for CredNX ePDF processing library
+Setup script for BankParser ePDF processing library
 """
 
 from setuptools import setup, find_packages
@@ -12,7 +12,7 @@ def read_readme():
     if os.path.exists(readme_path):
         with open(readme_path, 'r', encoding='utf-8') as f:
             return f.read()
-    return "CredNX ePDF processing library"
+    return "BankParser ePDF processing library"
 
 # Read requirements
 def read_requirements():
@@ -23,14 +23,14 @@ def read_requirements():
     return []
 
 setup(
-    name="crednx",
+    name="bankparser",
     version="1.0.0",
-    author="CredNX Team",
-    author_email="team@crednx.com",
+    author="BankParser Team",
+    author_email="team@bankparser.com",
     description="ePDF processing library for S3 integration and data extraction",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
-    url="https://github.com/crednx/crednx",
+    url="https://github.com/bankparser/bankparser",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -63,13 +63,13 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "crednx=example_usage:main",
+            "bankparser=example_usage:main",
         ],
     },
     keywords="pdf, s3, aws, data-extraction, epdf, document-processing",
     project_urls={
-        "Bug Reports": "https://github.com/crednx/crednx/issues",
-        "Source": "https://github.com/crednx/crednx",
-        "Documentation": "https://crednx.readthedocs.io/",
+        "Bug Reports": "https://github.com/bankparser/bankparser/issues",
+        "Source": "https://github.com/bankparser/bankparser",
+        "Documentation": "https://bankparser.readthedocs.io/",
     },
 )

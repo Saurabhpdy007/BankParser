@@ -19,7 +19,7 @@ def example_usage():
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
     
-    print("CredNX ePDF Processor Example")
+    print("BankParser ePDF Processor Example")
     print("=" * 50)
     
     try:

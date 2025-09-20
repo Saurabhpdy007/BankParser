@@ -1,7 +1,7 @@
-CredNX Documentation
-===================
+BankParser Documentation
+========================
 
-Welcome to CredNX's documentation! CredNX is a comprehensive Python library for consuming ePDF files from AWS S3 buckets using session IDs and extracting structured data from them.
+Welcome to BankParser's documentation! BankParser is a comprehensive Python library for consuming ePDF files from AWS S3 buckets using session IDs and extracting structured data from them.
 
 .. toctree::
    :maxdepth: 2
@@ -29,7 +29,7 @@ Quick Start
 
 .. code-block:: python
 
-   from crednx import EPdfProcessor
+   from bankparser import EPdfProcessor
 
    # Initialize processor
    processor = EPdfProcessor()
@@ -47,14 +47,14 @@ Installation
 
 .. code-block:: bash
 
-   pip install crednx
+   pip install bankparser
 
 Or from source:
 
 .. code-block:: bash
 
-   git clone https://github.com/crednx/crednx.git
-   cd crednx
+   git clone https://github.com/bankparser/bankparser.git
+   cd bankparser
    pip install -r requirements.txt
    pip install -e .
 

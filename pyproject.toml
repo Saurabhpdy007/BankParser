@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "crednx"
+name = "bankparser"
 version = "1.0.0"
 authors = [
-    {name = "CredNX Team", email = "team@crednx.com"},
+    {name = "BankParser Team", email = "team@bankparser.com"},
 ]
 description = "ePDF processing library for S3 integration and data extraction"
 readme = "README.md"
@@ -50,17 +50,17 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/crednx/crednx"
-Documentation = "https://crednx.readthedocs.io/"
-Repository = "https://github.com/crednx/crednx"
-"Bug Tracker" = "https://github.com/crednx/crednx/issues"
+Homepage = "https://github.com/bankparser/bankparser"
+Documentation = "https://bankparser.readthedocs.io/"
+Repository = "https://github.com/bankparser/bankparser"
+"Bug Tracker" = "https://github.com/bankparser/bankparser/issues"
 
 [project.scripts]
-crednx = "example_usage:main"
+bankparser = "example_usage:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["crednx*"]
+include = ["bankparser*"]
 
 [tool.black]
 line-length = 88
@@ -103,7 +103,7 @@ warn_unreachable = true
 strict_equality = true
 
 [tool.coverage.run]
-source = ["crednx"]
+source = ["bankparser"]
 omit = [
     "*/tests/*",
     "*/test_*",

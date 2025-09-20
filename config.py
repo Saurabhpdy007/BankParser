@@ -1,12 +1,12 @@
 """
-Configuration file for CredNX ePDF processing
+Configuration file for BankParser ePDF processing
 """
 
 import os
 from typing import Optional
 
 class Config:
-    """Configuration class for CredNX ePDF processing"""
+    """Configuration class for BankParser ePDF processing"""
     
     # AWS Configuration
     AWS_ACCESS_KEY_ID: Optional[str] = os.getenv('AWS_ACCESS_KEY_ID')
@@ -52,7 +52,7 @@ class Config:
     @classmethod
     def print_config(cls):
         """Print current configuration (without sensitive data)"""
-        print("CredNX Configuration:")
+        print("BankParser Configuration:")
         print("-" * 30)
         print(f"AWS Region: {cls.AWS_REGION}")
         print(f"S3 Bucket: {cls.S3_BUCKET_NAME}")

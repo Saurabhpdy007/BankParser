@@ -16,9 +16,9 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'CredNX'
-copyright = '2024, CredNX Team'
-author = 'CredNX Team'
+project = 'BankParser'
+copyright = '2024, BankParser Team'
+author = 'BankParser Team'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'

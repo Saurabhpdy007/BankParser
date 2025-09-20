@@ -1,4 +1,4 @@
-# CredNX - ePDF Processing Library
+# BankParser - ePDF Processing Library
 
 A comprehensive Python library for consuming ePDF files from AWS S3 buckets using session IDs and extracting structured data from them.
 
@@ -15,15 +15,15 @@ A comprehensive Python library for consuming ePDF files from AWS S3 buckets usin
 
 ### From Source
 ```bash
-git clone https://github.com/crednx/crednx.git
-cd crednx
+git clone https://github.com/bankparser/bankparser.git
+cd bankparser
 pip install -r requirements.txt
 pip install -e .
 ```
 
 ### From PyPI (when published)
 ```bash
-pip install crednx
+pip install bankparser
 ```
 
 ## 🛠 Quick Start
@@ -31,7 +31,7 @@ pip install crednx
 ### Basic Usage
 
 ```python
-from crednx import EPdfProcessor
+from bankparser import EPdfProcessor
 
 # Initialize processor
 processor = EPdfProcessor()
@@ -129,7 +129,7 @@ You can customize the prefix by setting the `S3_EPDF_PREFIX` environment variabl
 ### Custom AWS Configuration
 
 ```python
-from crednx import EPdfProcessor
+from bankparser import EPdfProcessor
 
 # Custom AWS configuration
 processor = EPdfProcessor(
@@ -153,7 +153,7 @@ for session_id in session_ids:
 ### Using Configuration Class
 
 ```python
-from crednx import Config
+from bankparser import Config
 
 # Validate configuration
 if Config.validate():
@@ -177,7 +177,7 @@ pip install -e ".[dev]"
 pytest
 
 # Run with coverage
-pytest --cov=crednx
+pytest --cov=bankparser
 ```
 
 ## 📚 API Reference
@@ -245,9 +245,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: team@crednx.com
-- 🐛 Issues: [GitHub Issues](https://github.com/crednx/crednx/issues)
-- 📖 Documentation: [Read the Docs](https://crednx.readthedocs.io/)
+- 📧 Email: team@bankparser.com
+- 🐛 Issues: [GitHub Issues](https://github.com/bankparser/bankparser/issues)
+- 📖 Documentation: [Read the Docs](https://bankparser.readthedocs.io/)
 
 ## 🙏 Acknowledgments
 

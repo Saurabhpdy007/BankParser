@@ -1,9 +1,9 @@
-# Minimal makefile for CredNX project
+# Minimal makefile for BankParser project
 
 .PHONY: help install install-dev test clean docs build
 
 help:
-	@echo "CredNX - ePDF Processing Library"
+	@echo "BankParser - ePDF Processing Library"
 	@echo "================================="
 	@echo ""
 	@echo "Available commands:"

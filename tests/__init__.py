@@ -1,3 +1,3 @@
 """
-Test package for CredNX ePDF processing library
+Test package for BankParser ePDF processing library
 """
