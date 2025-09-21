@@ -10,6 +10,7 @@ import pdfplumber
 import fitz  # PyMuPDF
 from io import BytesIO
 import pandas as pd
+from bank_formatters import BankFormatterFactory, auto_detect_bank
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -184,19 +185,73 @@ class EPdfProcessor:
         
         return extracted_data
     
-    def process_epdf(self, bucket_name: str, session_id: str) -> Dict[str, Any]:
+    def format_with_bank_specific_parser(self, extracted_data: Dict[str, Any], bank_name: str = None) -> Dict[str, Any]:
         """
-        Complete workflow: retrieve ePDF from S3 and extract data
+        Apply bank-specific formatting to extracted data
+        
+        Args:
+            extracted_data: Raw extracted data from PDF
+            bank_name: Name of the bank (optional, will auto-detect if not provided)
+            
+        Returns:
+            Dict[str, Any]: Data with bank-specific formatting applied
+        """
+        try:
+            text_content = extracted_data.get("text_content", "")
+            
+            # Auto-detect bank if not provided
+            if not bank_name:
+                detected_bank = auto_detect_bank(text_content)
+                if detected_bank:
+                    bank_name = detected_bank
+                    logger.info(f"Auto-detected bank: {bank_name}")
+                else:
+                    logger.warning("Could not auto-detect bank, using generic formatting")
+                    return extracted_data
+            
+            # Get bank-specific formatter
+            try:
+                formatter = BankFormatterFactory.get_formatter(bank_name)
+                logger.info(f"Using {bank_name} formatter")
+            except ValueError as e:
+                logger.error(f"Bank formatter error: {str(e)}")
+                logger.info("Falling back to generic formatting")
+                return extracted_data
+            
+            # Apply bank-specific formatting
+            formatted_result = formatter.format_transactions(text_content)
+            
+            # Merge formatted data with original extracted data
+            result = extracted_data.copy()
+            result["bank_specific_data"] = formatted_result
+            result["bank_name"] = bank_name
+            
+            # Add formatted transactions to main result if successful
+            if formatted_result.get("success", False):
+                result["formatted_transactions"] = formatted_result.get("transactions", [])
+                result["total_formatted_transactions"] = formatted_result.get("total_transactions", 0)
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error in bank-specific formatting: {str(e)}")
+            # Return original data if formatting fails
+            return extracted_data
+    
+    def process_epdf(self, bucket_name: str, session_id: str, bank_name: str = None) -> Dict[str, Any]:
+        """
+        Complete workflow: retrieve ePDF from S3 and extract data with bank-specific formatting
         
         Args:
             bucket_name: Name of the S3 bucket
             session_id: Session ID used as file reference
+            bank_name: Name of the bank (optional, will auto-detect if not provided)
             
         Returns:
-            Dict[str, Any]: Extracted data as JSON-serializable dictionary
+            Dict[str, Any]: Extracted data as JSON-serializable dictionary with bank-specific formatting
         """
         try:
-            logger.info(f"Starting ePDF processing for session_id: {session_id}")
+            logger.info(f"Starting ePDF processing for session_id: {session_id}, bank: {bank_name or 'auto-detect'}")
             
             # Step 1: Retrieve ePDF from S3
             pdf_content = self.get_epdf_from_s3(bucket_name, session_id)
@@ -204,13 +259,16 @@ class EPdfProcessor:
             # Step 2: Extract data from ePDF
             extracted_data = self.extract_data_from_epdf(pdf_content)
             
+            # Step 3: Apply bank-specific formatting
+            formatted_data = self.format_with_bank_specific_parser(extracted_data, bank_name)
+            
             # Add session information
-            extracted_data["session_id"] = session_id
-            extracted_data["bucket_name"] = bucket_name
-            extracted_data["processing_timestamp"] = str(pd.Timestamp.now())
+            formatted_data["session_id"] = session_id
+            formatted_data["bucket_name"] = bucket_name
+            formatted_data["processing_timestamp"] = str(pd.Timestamp.now())
             
             logger.info(f"Successfully processed ePDF for session_id: {session_id}")
-            return extracted_data
+            return formatted_data
             
         except Exception as e:
             logger.error(f"Failed to process ePDF for session_id {session_id}: {str(e)}")
@@ -219,11 +277,12 @@ class EPdfProcessor:
 
 def main():
     """
-    Example usage of the EPdfProcessor
+    Example usage of the EPdfProcessor with bank-specific formatting
     """
     # Configuration - replace with your actual values
     BUCKET_NAME = "your-s3-bucket-name"
     SESSION_ID = "your-session-id"
+    BANK_NAME = "HDFC"  # Specify bank name: HDFC, ICICI, SBI, or None for auto-detect
     AWS_ACCESS_KEY_ID = "your-access-key"  # or use environment variables
     AWS_SECRET_ACCESS_KEY = "your-secret-key"  # or use environment variables
     AWS_REGION = "us-east-1"
@@ -236,18 +295,44 @@ def main():
             region_name=AWS_REGION
         )
         
-        # Process ePDF
-        result = processor.process_epdf(BUCKET_NAME, SESSION_ID)
+        # Process ePDF with bank-specific formatting
+        result = processor.process_epdf(BUCKET_NAME, SESSION_ID, BANK_NAME)
         
-        # Print results
-        print("Extracted Data:")
-        print(json.dumps(result, indent=2, ensure_ascii=False))
+        # Print results summary
+        print("=" * 60)
+        print("BankParser ePDF Processing Results")
+        print("=" * 60)
+        print(f"Session ID: {result.get('session_id', 'N/A')}")
+        print(f"Bank Name: {result.get('bank_name', 'N/A')}")
+        print(f"Pages Count: {result.get('pages_count', 'N/A')}")
+        print(f"Total Formatted Transactions: {result.get('total_formatted_transactions', 0)}")
+        print(f"Processing Timestamp: {result.get('processing_timestamp', 'N/A')}")
+        
+        # Print bank-specific data if available
+        if 'bank_specific_data' in result:
+            bank_data = result['bank_specific_data']
+            print(f"\nBank-Specific Formatting:")
+            print(f"  Success: {bank_data.get('success', False)}")
+            if bank_data.get('success'):
+                print(f"  Total Transactions: {bank_data.get('total_transactions', 0)}")
+            else:
+                print(f"  Error: {bank_data.get('error', 'Unknown error')}")
+        
+        # Print sample transactions
+        if 'formatted_transactions' in result and result['formatted_transactions']:
+            print(f"\nSample Transactions (first 3):")
+            for i, transaction in enumerate(result['formatted_transactions'][:3]):
+                print(f"  {i+1}. {transaction.get('date', 'N/A')} - {transaction.get('narration', 'N/A')} - {transaction.get('amount', 'N/A')} ({transaction.get('type', 'N/A')})")
         
         # Save to file if needed
-        with open(f"extracted_data_{SESSION_ID}.json", "w", encoding="utf-8") as f:
+        output_filename = f"extracted_data_{SESSION_ID}_{BANK_NAME or 'auto'}.json"
+        with open(output_filename, "w", encoding="utf-8") as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         
-        print(f"\nData saved to: extracted_data_{SESSION_ID}.json")
+        print(f"\nData saved to: {output_filename}")
+        
+        # Show supported banks
+        print(f"\nSupported Banks: {BankFormatterFactory.get_supported_banks()}")
         
     except Exception as e:
         logger.error(f"Main execution failed: {str(e)}")
