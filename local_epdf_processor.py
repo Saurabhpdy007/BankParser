@@ -830,6 +830,10 @@ class LocalEPdfProcessor:
                     session_results["bank_specific_data"] = formatted_data["bank_specific_data"]
                     session_results["bank_name"] = formatted_data["bank_specific_data"].get("bank_name")
                     session_results["total_formatted_transactions"] = formatted_data["bank_specific_data"].get("total_transactions", 0)
+                    
+                    # Save formatted results to extractedData folder
+                    extracted_data_folder = self.get_extracted_data_folder(session_id)
+                    self.save_formatted_results(extracted_data_folder, session_id, formatted_data["bank_specific_data"])
                 
             except Exception as e:
                 logger.error(f"Error adding bank-specific data: {str(e)}")
