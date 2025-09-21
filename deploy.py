@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-CredNX Deployment Script
-========================
+{BRAND_NAME} Deployment Script
+==============================
 
-A production-ready deployment script for the CredNX ePDF processing system.
+A production-ready deployment script for the {BRAND_NAME} ePDF processing system.
 Handles environment setup, validation, and initial configuration.
 
 Usage:
@@ -23,6 +23,10 @@ import logging
 from pathlib import Path
 import json
 import subprocess
+from brand_config import BRAND_NAME, BRAND_VERSION, BRAND_AUTHOR
+
+# Format the docstring with brand config
+__doc__ = __doc__.format(BRAND_NAME=BRAND_NAME)
 
 # Configure logging
 logging.basicConfig(
@@ -36,8 +40,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class CredNXDeployer:
-    """Handles deployment and validation of CredNX system"""
+class BSAParserDeployer:
+    """Handles deployment and validation of BSAParser system"""
     
     def __init__(self, bsa_folder: str = "./BSA", log_level: str = "INFO"):
         self.bsa_folder = Path(bsa_folder)
@@ -102,17 +106,17 @@ class CredNXDeployer:
         
         config_content = f'''#!/usr/bin/env python3
 """
-CredNX Configuration
-====================
+{BRAND_NAME} Configuration
+==========================
 
-Configuration settings for the CredNX ePDF processing system.
+Configuration settings for the {BRAND_NAME} ePDF processing system.
 """
 
 import os
 from pathlib import Path
 
 class Config:
-    """Configuration class for CredNX system"""
+    """Configuration class for {BRAND_NAME} system"""
     
     # Directory settings
     BSA_FOLDER = Path("{self.bsa_folder}")
@@ -164,9 +168,9 @@ class Config:
             example_session = self.bsa_folder / "session_001"
             
             # Create README for example session
-            readme_content = """# Example Session
+            readme_content = f"""# Example Session
 
-This is an example session folder for CredNX ePDF processing.
+This is an example session folder for {BRAND_NAME} ePDF processing.
 
 ## How to use:
 
@@ -205,7 +209,7 @@ This is an example session folder for CredNX ePDF processing.
         try:
             # Import main modules
             from local_epdf_processor import LocalEPdfProcessor
-            from text_formatter import TransactionFormatter
+            from bank_formatters.hdfc_formatter import TransactionFormatter
             
             # Test processor initialization
             processor = LocalEPdfProcessor(str(self.bsa_folder))
@@ -227,8 +231,8 @@ This is an example session folder for CredNX ePDF processing.
             return False
     
     def deploy(self, create_example: bool = False) -> bool:
-        """Deploy the CredNX system"""
-        logger.info("🚀 Starting CredNX deployment...")
+        """Deploy the BSAParser system"""
+        logger.info(f"🚀 Starting {BRAND_NAME} deployment...")
         
         steps = [
             ("Environment validation", self.validate_environment),
@@ -247,7 +251,7 @@ This is an example session folder for CredNX ePDF processing.
                 return False
             logger.info(f"✅ {step_name} completed")
         
-        logger.info("🎉 CredNX deployment completed successfully!")
+        logger.info(f"🎉 {BRAND_NAME} deployment completed successfully!")
         logger.info(f"📁 BSA folder: {self.bsa_folder}")
         logger.info(f"📝 Log level: {self.log_level}")
         logger.info("💡 Ready to process PDF files!")
@@ -258,7 +262,7 @@ This is an example session folder for CredNX ePDF processing.
 def main():
     """Main deployment function"""
     parser = argparse.ArgumentParser(
-        description="Deploy CredNX ePDF processing system",
+        description=f"Deploy {BRAND_NAME} ePDF processing system",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )
@@ -294,7 +298,7 @@ def main():
     logging.getLogger().setLevel(getattr(logging, args.log_level))
     
     # Initialize deployer
-    deployer = CredNXDeployer(args.bsa_folder, args.log_level)
+    deployer = BSAParserDeployer(args.bsa_folder, args.log_level)
     
     if args.validate_only:
         logger.info("🔍 Running validation only...")

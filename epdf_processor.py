@@ -11,6 +11,7 @@ import fitz  # PyMuPDF
 from io import BytesIO
 import pandas as pd
 from bank_formatters import BankFormatterFactory, auto_detect_bank
+from pdf_password_utils import PDFPasswordHandler
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -86,12 +87,13 @@ class EPdfProcessor:
             logger.error(f"Unexpected error retrieving ePDF: {str(e)}")
             raise
     
-    def extract_data_from_epdf(self, pdf_content: bytes) -> Dict[str, Any]:
+    def extract_data_from_epdf(self, pdf_content: bytes, password: Optional[str] = None) -> Dict[str, Any]:
         """
         Extract data from ePDF content and return as JSON
         
         Args:
             pdf_content: PDF content as bytes
+            password: Optional password for password-protected PDFs
             
         Returns:
             Dict[str, Any]: Extracted data as dictionary
@@ -106,6 +108,25 @@ class EPdfProcessor:
         }
         
         try:
+            # Check if PDF is password protected and unlock if needed
+            logger.info(f"Validating password protection (password provided: {password is not None})")
+            is_valid, error_msg, unlocked_content = PDFPasswordHandler.validate_password_protection(
+                pdf_content, password
+            )
+            
+            if not is_valid:
+                logger.error(f"Password protection error: {error_msg}")
+                # Provide more specific error messages
+                if "Password Protected File" in error_msg:
+                    raise ValueError("Password Protected File - Please provide a password to unlock this PDF")
+                elif "Invalid password" in error_msg:
+                    raise ValueError("Invalid password provided - Please check the password and try again")
+                else:
+                    raise ValueError(f"PDF processing error: {error_msg}")
+            
+            # Use unlocked content for processing
+            pdf_content = unlocked_content
+            logger.info(f"PDF successfully validated/unlocked, proceeding with extraction")
             # Method 1: Using PyMuPDF (fitz) for comprehensive extraction
             pdf_document = fitz.open(stream=pdf_content, filetype="pdf")
             extracted_data["pages_count"] = len(pdf_document)
@@ -238,7 +259,7 @@ class EPdfProcessor:
             # Return original data if formatting fails
             return extracted_data
     
-    def process_epdf(self, bucket_name: str, session_id: str, bank_name: str = None) -> Dict[str, Any]:
+    def process_epdf(self, bucket_name: str, session_id: str, bank_name: str = None, password: Optional[str] = None) -> Dict[str, Any]:
         """
         Complete workflow: retrieve ePDF from S3 and extract data with bank-specific formatting
         
@@ -246,6 +267,7 @@ class EPdfProcessor:
             bucket_name: Name of the S3 bucket
             session_id: Session ID used as file reference
             bank_name: Name of the bank (optional, will auto-detect if not provided)
+            password: Optional password for password-protected PDFs
             
         Returns:
             Dict[str, Any]: Extracted data as JSON-serializable dictionary with bank-specific formatting
@@ -257,7 +279,7 @@ class EPdfProcessor:
             pdf_content = self.get_epdf_from_s3(bucket_name, session_id)
             
             # Step 2: Extract data from ePDF
-            extracted_data = self.extract_data_from_epdf(pdf_content)
+            extracted_data = self.extract_data_from_epdf(pdf_content, password)
             
             # Step 3: Apply bank-specific formatting
             formatted_data = self.format_with_bank_specific_parser(extracted_data, bank_name)
@@ -283,6 +305,7 @@ def main():
     BUCKET_NAME = "your-s3-bucket-name"
     SESSION_ID = "your-session-id"
     BANK_NAME = "HDFC"  # Specify bank name: HDFC, ICICI, SBI, or None for auto-detect
+    PASSWORD = None  # Optional password for password-protected PDFs
     AWS_ACCESS_KEY_ID = "your-access-key"  # or use environment variables
     AWS_SECRET_ACCESS_KEY = "your-secret-key"  # or use environment variables
     AWS_REGION = "us-east-1"
@@ -296,7 +319,7 @@ def main():
         )
         
         # Process ePDF with bank-specific formatting
-        result = processor.process_epdf(BUCKET_NAME, SESSION_ID, BANK_NAME)
+        result = processor.process_epdf(BUCKET_NAME, SESSION_ID, BANK_NAME, PASSWORD)
         
         # Print results summary
         print("=" * 60)

@@ -4,6 +4,8 @@
 
 BankParser now supports **bank-specific formatters** that can handle different bank statement formats automatically. Each bank has its own specialized formatter that understands the unique structure and patterns of that bank's statements.
 
+**Note**: The original `text_formatter.py` has been renamed to `hdfc_formatter.py` and moved to the `bank_formatters/` folder to better organize bank-specific formatters.
+
 ## 🚀 Key Features
 
 - **Multi-Bank Support**: HDFC, ICICI, SBI, and more

@@ -1,4 +1,4 @@
-# CredNX Production Deployment Checklist
+# BankParser Production Deployment Checklist
 
 ## ✅ Pre-Deployment Checklist
 
@@ -163,9 +163,9 @@ python local_epdf_processor.py
 
 ### Contact
 - **Issues**: Create GitHub issues for bugs
-- **Questions**: Contact CredNX development team
+- **Questions**: Contact BankParser development team
 - **Updates**: Monitor repository for updates
 
 ---
 
-**CredNX Team** - Production Ready ✅
+**BankParser Team** - Production Ready ✅

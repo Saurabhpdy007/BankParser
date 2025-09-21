@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-CredNX Local ePDF Processor
-===========================
+{BRAND_NAME} Local ePDF Processor
+=================================
 
 A comprehensive ePDF processing system for bank statement extraction and analysis.
 Handles local file-based processing with advanced features:
@@ -14,7 +14,7 @@ Handles local file-based processing with advanced features:
 - Error handling and validation
 
 Version: 2.0
-Author: CredNX Team
+Author: {BRAND_AUTHOR}
 """
 
 import os
@@ -30,7 +30,20 @@ import PyPDF2
 from io import BytesIO
 import pandas as pd
 from datetime import datetime
-from text_formatter import TransactionFormatter
+# Import directly from the main bank_formatters module to avoid circular imports
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+from bank_formatters_main import BankFormatterFactory, auto_detect_bank
+from brand_config import BRAND_NAME, BRAND_VERSION, BRAND_AUTHOR
+from pdf_password_utils import PDFPasswordHandler
+
+# Format the docstring with brand config
+__doc__ = __doc__.format(
+    BRAND_NAME=BRAND_NAME,
+    BRAND_VERSION=BRAND_VERSION,
+    BRAND_AUTHOR=BRAND_AUTHOR
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -60,19 +73,44 @@ class LocalEPdfProcessor:
         
         logger.info(f"Local ePDF processor initialized with BSA folder: {self.bsa_folder_path}")
     
-    def is_epdf(self, pdf_path: Path) -> bool:
+    def is_epdf(self, pdf_path: Path, password: Optional[str] = None) -> bool:
         """
         Check if a PDF is a true ePDF (text-based) and not a scanned/image PDF
+        Also handles password-protected PDFs
         
         Args:
             pdf_path: Path to the PDF file
+            password: Optional password for password-protected PDFs
             
         Returns:
-            bool: True if it's an ePDF, False if it's scanned/image
+            bool: True if it's an ePDF, False if it's scanned/image or password-protected without password
         """
         try:
-            # Open PDF with PyMuPDF
-            doc = fitz.open(pdf_path)
+            # First check if PDF is password protected
+            with open(pdf_path, 'rb') as f:
+                pdf_content = f.read()
+            
+            is_protected = PDFPasswordHandler.is_password_protected(pdf_content)
+            
+            if is_protected:
+                if password is None:
+                    logger.warning(f"PDF is password protected but no password provided: {pdf_path.name}")
+                    return False  # Treat as invalid if password protected but no password
+                
+                # Try to unlock with password
+                is_valid, error_msg, unlocked_content = PDFPasswordHandler.validate_password_protection(
+                    pdf_content, password
+                )
+                
+                if not is_valid:
+                    logger.warning(f"Failed to unlock password-protected PDF {pdf_path.name}: {error_msg}")
+                    return False
+                
+                # Use unlocked content for text analysis
+                pdf_content = unlocked_content
+            
+            # Open PDF with PyMuPDF (using unlocked content if needed)
+            doc = fitz.open(stream=pdf_content, filetype="pdf")
             
             # Check first few pages for text content
             text_content = ""
@@ -101,13 +139,21 @@ class LocalEPdfProcessor:
             is_valid_epdf = has_substantial_text and has_text_patterns
             
             if not is_valid_epdf:
-                logger.warning(f"PDF appears to be scanned/image-based: {pdf_path.name} (text length: {text_length})")
+                if is_protected:
+                    logger.warning(f"Password-protected PDF appears to be scanned/image-based: {pdf_path.name} (text length: {text_length})")
+                else:
+                    logger.warning(f"PDF appears to be scanned/image-based: {pdf_path.name} (text length: {text_length})")
             
             return is_valid_epdf
             
         except Exception as e:
-            logger.error(f"Error checking PDF type for {pdf_path.name}: {str(e)}")
-            return False
+            error_msg = str(e).lower()
+            if "encrypted" in error_msg or "password" in error_msg:
+                logger.warning(f"PDF appears to be password protected: {pdf_path.name}")
+                return False  # Treat password-protected PDFs as invalid if no password provided
+            else:
+                logger.error(f"Error checking PDF type for {pdf_path.name}: {str(e)}")
+                return False
     
     def get_session_folder(self, session_id: str) -> Path:
         """
@@ -182,13 +228,15 @@ class LocalEPdfProcessor:
             "last_updated": None
         }
     
-    def save_comprehensive_results(self, session_id: str, current_run_data: Dict[str, Any], start_time: float = None) -> str:
+    def save_comprehensive_results(self, session_id: str, current_run_data: Dict[str, Any], start_time: float = None, bank_name: Optional[str] = None) -> str:
         """
         Save comprehensive results in a single file with all metadata and extracted text
         
         Args:
             session_id: Session ID
             current_run_data: Current run data to save
+            start_time: Processing start time
+            bank_name: Optional bank name for formatting
             
         Returns:
             str: Path to the saved comprehensive results file
@@ -246,13 +294,14 @@ class LocalEPdfProcessor:
         
         logger.info(f"Saved comprehensive results for session {session_id}: {comprehensive_file}")
         
-        # Run formatting function to add transaction structure
+        # Run bank-specific formatting function to add transaction structure
         try:
-            formatter = TransactionFormatter()
+            # Apply bank-specific formatting
+            formatted_data = self.format_with_bank_specific_parser(comprehensive_data, bank_name)
             
-            # Generate clean formatted file and CSV
-            formatted_file = formatter.save_formatted_file(str(comprehensive_file))
-            logger.info(f"Saved clean formatted transaction data: {formatted_file}")
+            # Save formatted results
+            formatted_file = self.save_formatted_results(extracted_data_folder, session_id, formatted_data)
+            logger.info(f"Saved bank-specific formatted transaction data: {formatted_file}")
             
         except Exception as e:
             logger.error(f"Error formatting transactions: {str(e)}")
@@ -266,6 +315,107 @@ class LocalEPdfProcessor:
             logger.info(f"⏱️  Total processing time: {minutes:02d}:{seconds:02d}")
         
         return str(comprehensive_file)
+    
+    def format_with_bank_specific_parser(self, extracted_data: Dict[str, Any], bank_name: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Apply bank-specific formatting to extracted data
+        
+        Args:
+            extracted_data: Raw extracted data from PDF
+            bank_name: Name of the bank (optional, will auto-detect if not provided)
+            
+        Returns:
+            Dict[str, Any]: Data with bank-specific formatting applied
+        """
+        try:
+            text_content = extracted_data.get("all_extracted_text", "")
+            
+            # Auto-detect bank if not provided
+            if not bank_name:
+                detected_bank = auto_detect_bank(text_content)
+                if detected_bank:
+                    bank_name = detected_bank
+                    logger.info(f"Auto-detected bank: {bank_name}")
+                else:
+                    logger.warning("Could not auto-detect bank, using generic formatting")
+                    return extracted_data
+            
+            # Get bank-specific formatter
+            try:
+                formatter = BankFormatterFactory.get_formatter(bank_name)
+                logger.info(f"Using {bank_name} formatter")
+            except ValueError as e:
+                logger.error(f"Bank formatter error: {str(e)}")
+                logger.info("Falling back to generic formatting")
+                return extracted_data
+            
+            # Apply bank-specific formatting
+            if hasattr(formatter, 'format_transactions'):
+                # New formatters (like ICICI) have format_transactions method
+                formatted_result = formatter.format_transactions(text_content)
+            elif hasattr(formatter, 'format_transaction_data'):
+                # HDFC formatter has format_transaction_data method
+                transactions = formatter.parse_bank_statement_format(text_content)
+                formatted_result = {
+                    "bank_name": formatter.get_bank_name(),
+                    "success": len(transactions) > 0,
+                    "transactions": transactions,
+                    "total_transactions": len(transactions),
+                    "formatted_at": datetime.now().isoformat()
+                }
+            else:
+                # Legacy formatters use parse_bank_statement_format
+                transactions = formatter.parse_bank_statement_format(text_content)
+                formatted_result = {
+                    "bank_name": formatter.get_bank_name(),
+                    "success": len(transactions) > 0,
+                    "transactions": transactions,
+                    "total_transactions": len(transactions),
+                    "formatted_at": datetime.now().isoformat()
+                }
+            
+            # Merge formatted data with original extracted data
+            result = extracted_data.copy()
+            result["bank_specific_data"] = formatted_result
+            result["bank_name"] = bank_name
+            
+            # Add formatted transactions to main result if successful
+            if formatted_result.get("success", False):
+                result["formatted_transactions"] = formatted_result.get("transactions", [])
+                result["total_formatted_transactions"] = formatted_result.get("total_transactions", 0)
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error in bank-specific formatting: {str(e)}")
+            # Return original data if formatting fails
+            return extracted_data
+    
+    def save_formatted_results(self, extracted_data_folder: Path, session_id: str, formatted_data: Dict[str, Any]) -> str:
+        """
+        Save bank-specific formatted results
+        
+        Args:
+            extracted_data_folder: Folder to save results
+            session_id: Session ID
+            formatted_data: Formatted data to save
+            
+        Returns:
+            str: Path to the saved formatted file
+        """
+        # Save formatted JSON
+        formatted_json_file = extracted_data_folder / f"{session_id}_extracted_data_formatted.json"
+        with open(formatted_json_file, "w", encoding="utf-8") as f:
+            json.dump(formatted_data, f, indent=2, ensure_ascii=False)
+        
+        # Save formatted CSV if transactions are available
+        if "formatted_transactions" in formatted_data and formatted_data["formatted_transactions"]:
+            formatted_csv_file = extracted_data_folder / f"{session_id}_extracted_data_formatted.csv"
+            df = pd.DataFrame(formatted_data["formatted_transactions"])
+            df.to_csv(formatted_csv_file, index=False, encoding="utf-8")
+            logger.info(f"Saved formatted CSV: {formatted_csv_file}")
+        
+        return str(formatted_json_file)
     
     def session_exists(self, session_id: str) -> bool:
         """
@@ -331,7 +481,7 @@ class LocalEPdfProcessor:
             logger.error(f"Failed to read PDF {pdf_path}: {str(e)}")
             raise
     
-    def extract_data_from_epdf(self, pdf_content: bytes, pdf_name: str = "unknown") -> Dict[str, Any]:
+    def extract_data_from_epdf(self, pdf_content: bytes, pdf_name: str = "unknown", password: Optional[str] = None) -> Dict[str, Any]:
         """
         Extract data from ePDF content and return as JSON
         (Same as original EPdfProcessor but with additional file info)
@@ -339,6 +489,7 @@ class LocalEPdfProcessor:
         Args:
             pdf_content: PDF content as bytes
             pdf_name: Name of the PDF file for logging
+            password: Optional password for password-protected PDFs
             
         Returns:
             Dict[str, Any]: Extracted data as dictionary
@@ -354,6 +505,25 @@ class LocalEPdfProcessor:
         }
         
         try:
+            # Check if PDF is password protected and unlock if needed
+            logger.info(f"Validating password protection for {pdf_name} (password provided: {password is not None})")
+            is_valid, error_msg, unlocked_content = PDFPasswordHandler.validate_password_protection(
+                pdf_content, password
+            )
+            
+            if not is_valid:
+                logger.error(f"Password protection error for {pdf_name}: {error_msg}")
+                # Provide more specific error messages
+                if "Password Protected File" in error_msg:
+                    raise ValueError(f"{pdf_name}: Password Protected File - Please provide a password to unlock this PDF")
+                elif "Invalid password" in error_msg:
+                    raise ValueError(f"{pdf_name}: Invalid password provided - Please check the password and try again")
+                else:
+                    raise ValueError(f"{pdf_name}: PDF processing error - {error_msg}")
+            
+            # Use unlocked content for processing
+            pdf_content = unlocked_content
+            logger.info(f"PDF {pdf_name} successfully validated/unlocked, proceeding with extraction")
             # Method 1: Using PyMuPDF (fitz) for comprehensive extraction
             pdf_document = fitz.open(stream=pdf_content, filetype="pdf")
             extracted_data["pages_count"] = len(pdf_document)
@@ -433,12 +603,14 @@ class LocalEPdfProcessor:
         
         return extracted_data
     
-    def process_session(self, session_id: str) -> Dict[str, Any]:
+    def process_session(self, session_id: str, password: Optional[str] = None, bank_name: Optional[str] = None) -> Dict[str, Any]:
         """
         Process all ePDFs for a given session ID
         
         Args:
             session_id: Session ID to process
+            password: Optional password for password-protected PDFs
+            bank_name: Optional bank name (HDFC, ICICI, SBI) or None for auto-detect
             
         Returns:
             Dict[str, Any]: Combined extracted data from all PDFs in the session
@@ -471,9 +643,31 @@ class LocalEPdfProcessor:
         
         # Validate all PDFs are ePDFs before processing
         scanned_pdfs = []
+        password_protected_pdfs = []
         for pdf_path in pdf_files:
-            if not self.is_epdf(pdf_path):
-                scanned_pdfs.append(pdf_path.name)
+            if not self.is_epdf(pdf_path, password):
+                # Check if it's password protected
+                try:
+                    with open(pdf_path, 'rb') as f:
+                        pdf_content = f.read()
+                    is_protected = PDFPasswordHandler.is_password_protected(pdf_content)
+                    if is_protected:
+                        password_protected_pdfs.append(pdf_path.name)
+                    else:
+                        scanned_pdfs.append(pdf_path.name)
+                except Exception:
+                    scanned_pdfs.append(pdf_path.name)
+        
+        if password_protected_pdfs:
+            error_msg = f"Password Protected File - The following files are password protected: {', '.join(password_protected_pdfs)}. Please provide a password to unlock these PDFs."
+            logger.error(error_msg)
+            return {
+                "error": error_msg,
+                "session_id": session_id,
+                "success": False,
+                "pdfs_found": len(pdf_files),
+                "password_protected_pdfs": password_protected_pdfs
+            }
         
         if scanned_pdfs:
             error_msg = f"Please pass ePDFs for processing. The following files appear to be scanned/image PDFs: {', '.join(scanned_pdfs)}"
@@ -512,8 +706,19 @@ class LocalEPdfProcessor:
                 logger.info(f"Processing PDF: {pdf_path.name}")
                 
                 # Check if PDF is a true ePDF (text-based) and not scanned/image
-                if not self.is_epdf(pdf_path):
-                    error_msg = f"Please pass ePDFs for processing. File '{pdf_path.name}' appears to be a scanned/image PDF."
+                if not self.is_epdf(pdf_path, password):
+                    # Check if it's password protected
+                    try:
+                        with open(pdf_path, 'rb') as f:
+                            pdf_content = f.read()
+                        is_protected = PDFPasswordHandler.is_password_protected(pdf_content)
+                        if is_protected:
+                            error_msg = f"Password Protected File - File '{pdf_path.name}' is password protected. Please provide a password to unlock this PDF."
+                        else:
+                            error_msg = f"Please pass ePDFs for processing. File '{pdf_path.name}' appears to be a scanned/image PDF."
+                    except Exception:
+                        error_msg = f"Please pass ePDFs for processing. File '{pdf_path.name}' appears to be a scanned/image PDF."
+                    
                     logger.error(error_msg)
                     session_results["pdfs_failed"] += 1
                     session_results["pdfs"].append({
@@ -528,7 +733,7 @@ class LocalEPdfProcessor:
                 pdf_content = self.read_pdf_file(pdf_path)
                 
                 # Extract data
-                extracted_data = self.extract_data_from_epdf(pdf_content, pdf_path.name)
+                extracted_data = self.extract_data_from_epdf(pdf_content, pdf_path.name, password)
                 
                 # Add file path info
                 extracted_data["file_path"] = str(pdf_path)
@@ -587,9 +792,47 @@ class LocalEPdfProcessor:
         
         # Save comprehensive results in single file
         if session_results["success"] or session_results["pdfs_processed"] > 0:
-            results_file_path = self.save_comprehensive_results(session_id, session_results, start_time)
+            results_file_path = self.save_comprehensive_results(session_id, session_results, start_time, bank_name)
             session_results["results_file_path"] = results_file_path
             session_results["extracted_data_folder"] = str(self.get_extracted_data_folder(session_id))
+            
+            # Add bank-specific data for balance validation report
+            try:
+                # Load the comprehensive data to get bank-specific formatting
+                comprehensive_data = {
+                    "session_info": session_results.get("session_info", {}),
+                    "extraction_summary": {
+                        "success": session_results.get("success", False),
+                        "pdfs_found": session_results.get("pdfs_found", 0),
+                        "pdfs_processed": session_results.get("pdfs_processed", 0),
+                        "pdfs_failed": session_results.get("pdfs_failed", 0),
+                        "total_pages": session_results.get("combined_data", {}).get("total_pages", 0),
+                        "total_text_length": session_results.get("combined_data", {}).get("total_text_length", 0),
+                        "total_tables": session_results.get("combined_data", {}).get("total_tables", 0),
+                        "total_images": session_results.get("combined_data", {}).get("total_images", 0),
+                    },
+                    "all_extracted_text": session_results.get("combined_data", {}).get("all_text_content", ""),
+                    "all_metadata": session_results.get("combined_data", {}).get("all_metadata", []),
+                    "all_tables": session_results.get("combined_data", {}).get("all_tables", []),
+                    "all_images": session_results.get("combined_data", {}).get("all_images", []),
+                    "individual_pdfs": session_results.get("pdfs", []),
+                    "processing_details": {
+                        "processing_timestamp": session_results.get("processing_timestamp", ""),
+                        "total_processing_time": time.time() - start_time if start_time else 0
+                    }
+                }
+                
+                # Apply bank-specific formatting
+                formatted_data = self.format_with_bank_specific_parser(comprehensive_data, bank_name)
+                
+                # Add bank-specific data to session results
+                if "bank_specific_data" in formatted_data:
+                    session_results["bank_specific_data"] = formatted_data["bank_specific_data"]
+                    session_results["bank_name"] = formatted_data["bank_specific_data"].get("bank_name")
+                    session_results["total_formatted_transactions"] = formatted_data["bank_specific_data"].get("total_transactions", 0)
+                
+            except Exception as e:
+                logger.error(f"Error adding bank-specific data: {str(e)}")
         
         return session_results
     
@@ -695,6 +938,7 @@ def main():
     Main function to run the local ePDF processor with session selection
     """
     import sys
+    import getpass
     
     # Initialize processor
     processor = LocalEPdfProcessor("./BSA")
@@ -725,7 +969,7 @@ def main():
     else:
         # Interactive mode - ask user to choose
         print("\n" + "="*50)
-        print("🎯 CredNX Session Selector")
+        print(f"🎯 {BRAND_NAME} Session Selector")
         print("="*50)
         print("Available sessions:")
         for i, session in enumerate(sessions, 1):
@@ -759,6 +1003,53 @@ def main():
         
         logger.info(f"Processing selected session: {session_id}")
     
+    # Ask for password if needed
+    password = None
+    try:
+        password_input = input("\nEnter password for password-protected PDFs (press Enter to skip): ").strip()
+        if password_input:
+            password = password_input
+            logger.info("Password provided for password-protected PDFs")
+        else:
+            logger.info("No password provided - will fail on password-protected PDFs")
+    except KeyboardInterrupt:
+        print("\nOperation cancelled.")
+        return
+    
+    # Ask for bank selection
+    bank_name = None
+    try:
+        print(f"\n🏦 Bank Selection:")
+        print("Available banks: HDFC, ICICI, SBI")
+        print("Options:")
+        print("  1. HDFC")
+        print("  2. ICICI") 
+        print("  3. SBI")
+        print("  4. Auto-detect (recommended)")
+        
+        bank_choice = input("Enter bank number (1-4) or bank name (press Enter for auto-detect): ").strip()
+        
+        if bank_choice == "1" or bank_choice.upper() == "HDFC":
+            bank_name = "HDFC"
+        elif bank_choice == "2" or bank_choice.upper() == "ICICI":
+            bank_name = "ICICI"
+        elif bank_choice == "3" or bank_choice.upper() == "SBI":
+            bank_name = "SBI"
+        elif bank_choice == "4" or bank_choice.upper() == "AUTO" or bank_choice == "":
+            bank_name = None  # Auto-detect
+        else:
+            logger.warning(f"Invalid bank choice '{bank_choice}', using auto-detect")
+            bank_name = None
+            
+        if bank_name:
+            logger.info(f"Selected bank: {bank_name}")
+        else:
+            logger.info("Using auto-detection for bank selection")
+            
+    except KeyboardInterrupt:
+        print("\nOperation cancelled.")
+        return
+    
     # Validate session exists
     if not processor.session_exists(session_id):
         logger.error(f"Session '{session_id}' does not exist!")
@@ -766,7 +1057,7 @@ def main():
         return
     
     try:
-        result = processor.process_session(session_id)
+        result = processor.process_session(session_id, password, bank_name)
         
         if result["success"]:
             logger.info(f"✓ Successfully processed {result['pdfs_processed']} PDFs")
@@ -775,11 +1066,33 @@ def main():
             logger.info(f"  Total tables: {result['combined_data']['total_tables']}")
             logger.info(f"  Total images: {result['combined_data']['total_images']}")
             
+            # Show bank-specific information
+            if "bank_name" in result:
+                logger.info(f"  Bank detected/used: {result['bank_name']}")
+            if "total_formatted_transactions" in result:
+                logger.info(f"  Formatted transactions: {result['total_formatted_transactions']}")
+            
+            # Show balance validation report
+            if "bank_specific_data" in result and result["bank_specific_data"]:
+                bank_data = result["bank_specific_data"]
+                if bank_data.get("success") and bank_data.get("transactions"):
+                    from balance_validator import format_balance_validation_report
+                    bank_name = bank_data.get("bank_name", "Unknown")
+                    transactions = bank_data.get("transactions", [])
+                    balance_report = format_balance_validation_report(transactions, bank_name)
+                    print(balance_report)
+            
             # Save results
             output_file = f"session_results_{session_id}.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(result, f, indent=2, ensure_ascii=False)
             logger.info(f"Results saved to: {output_file}")
+            
+            # Show sample transactions if available
+            if "formatted_transactions" in result and result["formatted_transactions"]:
+                logger.info(f"\n📋 Sample Transactions (first 3):")
+                for i, transaction in enumerate(result["formatted_transactions"][:3]):
+                    logger.info(f"  {i+1}. {transaction.get('date', 'N/A')} - {transaction.get('narration', 'N/A')} - {transaction.get('amount', 'N/A')} ({transaction.get('type', 'N/A')})")
             
         else:
             logger.error(f"✗ Processing failed: {result.get('error', 'Unknown error')}")
