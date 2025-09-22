@@ -1277,6 +1277,92 @@ class TransactionFormatter(BaseBankFormatter):
         logger.info(f"Sorted {len(sorted_transactions)} transactions by date (oldest first)")
         return sorted_transactions
         
+    def _validate_balance_equation(self, transactions: List[Dict[str, Any]]) -> bool:
+        """
+        Validate balance equation: Previous Balance + Credit - Debit = Next Balance
+        Returns True if there are mismatches, False if all equations are satisfied.
+        Skip the first transaction (no opening balance) and any B/F carry-forward rows.
+        """
+        if not transactions:
+            return False
+        mismatches: List[Dict[str, Any]] = []
+        current_balance = 0.0
+        for i, tx in enumerate(transactions):
+            if i == 0:
+                current_balance = float(tx.get('balance', 0.0) or 0.0)
+                continue
+            deposits = float(tx.get('deposits', 0.0) or 0.0)
+            withdrawals = float(tx.get('withdrawals', 0.0) or 0.0)
+            balance = float(tx.get('balance', 0.0) or 0.0)
+            mode = (tx.get('mode') or '').upper()
+            particulars = (tx.get('particulars') or '')
+            if mode == 'B/F' or 'B/F' in particulars:
+                current_balance = balance
+                continue
+            expected = current_balance + deposits - withdrawals
+            diff = abs(expected - balance)
+            if diff > 0.01:
+                mismatches.append({'transaction_index': i, 'date': tx.get('date', ''), 'expected_balance': expected, 'actual_balance': balance, 'difference': diff})
+            current_balance = balance
+        return len(mismatches) > 0
+
+    def format_transactions(self, extracted_text: str) -> Dict[str, Any]:
+        """
+        Map parsed HDFC transactions to the 6-field schema expected by the generic pipeline.
+        Returns balance_mismatch flag using the HDFC-specific validator.
+        """
+        try:
+            if not self.validate_statement(extracted_text):
+                return {
+                    "bank_name": self.get_bank_name(),
+                    "success": False,
+                    "error": f"Text does not match {self.get_bank_name()} statement format",
+                    "transactions": []
+                }
+
+            hdfc_transactions = self.parse_bank_statement_format(extracted_text)
+
+            clean_transactions: List[Dict[str, Any]] = []
+            mode_keywords = ["UPI", "NEFT", "IMPS", "ATM", "POS", "TRANSFER", "PAYMENT", "CHEQUE", "ECS", "DD", "RTGS"]
+
+            for tx in hdfc_transactions:
+                narration = tx.get("narration", "") or ""
+                upper_narr = narration.upper()
+                detected_mode = ""
+                for kw in mode_keywords:
+                    if kw in upper_narr:
+                        detected_mode = kw
+                        break
+
+                clean_transactions.append({
+                    "date": tx.get("transaction_date", ""),
+                    "mode": detected_mode,
+                    "particulars": narration,
+                    "deposits": tx.get("credit_amount", 0.0) or 0.0,
+                    "withdrawals": tx.get("debit_amount", 0.0) or 0.0,
+                    "balance": tx.get("closing_balance", 0.0) or 0.0,
+                })
+
+            balance_mismatch = self._validate_balance_equation(clean_transactions)
+
+            return {
+                "bank_name": self.get_bank_name(),
+                "success": len(clean_transactions) > 0,
+                "transactions": clean_transactions,
+                "total_transactions": len(clean_transactions),
+                "balance_mismatch": balance_mismatch,
+                "formatted_at": datetime.now().isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Error in HDFC format_transactions: {str(e)}")
+            return {
+                "bank_name": self.get_bank_name(),
+                "success": False,
+                "error": str(e),
+                "transactions": []
+            }
+
+
 def format_session_transactions(session_id: str, bsa_folder: str = "./BSA") -> Dict[str, Any]:
     """
     Convenience function to format transactions for a specific session
