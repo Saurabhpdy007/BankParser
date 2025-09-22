@@ -36,6 +36,11 @@ def validate_balance_equation(transactions: List[Dict[str, Any]]) -> Tuple[bool,
         withdrawals = tx.get('withdrawals', 0.0)
         balance = tx.get('balance', 0.0)
         
+        # Skip first transaction due to unknown opening balance
+        if i == 0:
+            current_balance = balance
+            continue
+        
         # Skip B/F transactions as they set the initial balance
         if tx.get('mode') == 'B/F' or (tx.get('mode') == '' and 'B/F' in tx.get('particulars', '')):
             current_balance = balance
