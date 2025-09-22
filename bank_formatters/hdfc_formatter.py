@@ -1276,8 +1276,7 @@ class TransactionFormatter(BaseBankFormatter):
         
         logger.info(f"Sorted {len(sorted_transactions)} transactions by date (oldest first)")
         return sorted_transactions
-    
-    
+        
 def format_session_transactions(session_id: str, bsa_folder: str = "./BSA") -> Dict[str, Any]:
     """
     Convenience function to format transactions for a specific session
