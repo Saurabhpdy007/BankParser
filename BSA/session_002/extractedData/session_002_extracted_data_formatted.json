@@ -1,0 +1,684 @@
+{
+  "bank_name": "HDFC",
+  "success": true,
+  "transactions": [
+    {
+      "date": "02/04/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-345817498937-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 212499.34,
+      "cheque_reference": "0000345817498937"
+    },
+    {
+      "date": "09/04/23",
+      "mode": "",
+      "particulars": "INT. AUTO_REDEMPTION 50300507978749",
+      "deposits": 16100.7,
+      "withdrawals": 0.0,
+      "balance": 228600.04,
+      "cheque_reference": "3304220230409770"
+    },
+    {
+      "date": "09/04/23",
+      "mode": "",
+      "particulars": "PRIN AND INT AUTO_REDEEM 50300507978749",
+      "deposits": 150000.0,
+      "withdrawals": 0.0,
+      "balance": 378600.04,
+      "cheque_reference": "3304220230409792"
+    },
+    {
+      "date": "03/05/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-312326065287-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 392100.04,
+      "cheque_reference": "0000312326065287"
+    },
+    {
+      "date": "15/05/23",
+      "mode": "POS",
+      "particulars": "CASH DEPOSIT BY - AMIT - DWARKA, NEW DEL HI",
+      "deposits": 175000.0,
+      "withdrawals": 0.0,
+      "balance": 567100.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/05/23",
+      "mode": "",
+      "particulars": "YHDF1901732100/BILLDKAMERICANEXPRES",
+      "deposits": 0.0,
+      "withdrawals": 69300.0,
+      "balance": 497800.04,
+      "cheque_reference": "0000231431806801"
+    },
+    {
+      "date": "26/05/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-32333541141DC ANITA JAIN APR SALARY",
+      "deposits": 100000.0,
+      "withdrawals": 0.0,
+      "balance": 597800.04,
+      "cheque_reference": "00032333541141DC"
+    },
+    {
+      "date": "02/06/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-315319560074-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 611300.04,
+      "cheque_reference": "0000315319560074"
+    },
+    {
+      "date": "03/06/23",
+      "mode": "",
+      "particulars": "CHQ DEP - MICR CLG - NOIDA WBO: VIMAL JA IN :STATE BANK OF INDIA",
+      "deposits": 900000.0,
+      "withdrawals": 0.0,
+      "balance": 1511300.04,
+      "cheque_reference": "0000000000731983"
+    },
+    {
+      "date": "06/06/23",
+      "mode": "",
+      "particulars": "CHQ DEP MICR CLG NOIDA - MICR 1 CLG - NO : VIMAL JAIN :STATE BANK OF INDIA",
+      "deposits": 445000.0,
+      "withdrawals": 0.0,
+      "balance": 1956300.04,
+      "cheque_reference": "0000000000731985"
+    },
+    {
+      "date": "08/06/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-32485912731DC ANITA JAIN MAY SALARY",
+      "deposits": 100000.0,
+      "withdrawals": 0.0,
+      "balance": 2056300.04,
+      "cheque_reference": "00032485912731DC"
+    },
+    {
+      "date": "13/06/23",
+      "mode": "",
+      "particulars": "FD THROUGH NET-50300809761717:ANITA JAIN",
+      "deposits": 0.0,
+      "withdrawals": 950000.0,
+      "balance": 1106300.04,
+      "cheque_reference": "IB13031823825000"
+    },
+    {
+      "date": "13/06/23",
+      "mode": "",
+      "particulars": "FD THROUGH NET-50300809763242:ANITA JAIN",
+      "deposits": 0.0,
+      "withdrawals": 350000.0,
+      "balance": 731300.04,
+      "cheque_reference": "IB13142106954390"
+    },
+    {
+      "date": "16/06/23",
+      "mode": "",
+      "particulars": "50200006257350-TPT-ANITA JAIN-ACTIVE HAU LAGE LOGISTICS",
+      "deposits": 0.0,
+      "withdrawals": 400000.0,
+      "balance": 281300.04,
+      "cheque_reference": "0000000171312228"
+    },
+    {
+      "date": "28/06/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-317917163345-YOGI GUPTA-SCBL-XXXXXX X1576-AGAINST SHARE PURCHASE OF AABIPORT ACTIVE",
+      "deposits": 0.0,
+      "withdrawals": 50000.0,
+      "balance": 231300.04,
+      "cheque_reference": "0000317917163345"
+    },
+    {
+      "date": "30/06/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-32735900391DC ANITA JAIN JUN E SALARY",
+      "deposits": 100000.0,
+      "withdrawals": 0.0,
+      "balance": 331300.04,
+      "cheque_reference": "00032735900391DC"
+    },
+    {
+      "date": "01/07/23",
+      "mode": "",
+      "particulars": "CREDIT INTEREST CAPITALISED",
+      "deposits": 3929.0,
+      "withdrawals": 0.0,
+      "balance": 335229.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "02/07/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-318328731485-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 348729.04,
+      "cheque_reference": "0000318328731485"
+    },
+    {
+      "date": "14/07/23",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-JUL 2023",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 323729.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "29/07/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-KKBK0000958-AABIPORT ACTIVE HAUL AGE PRIVATE LIM-ANITA JAIN-KKBKH23210890",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 358729.04,
+      "cheque_reference": "KKBKH23210890787"
+    },
+    {
+      "date": "02/08/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-358011020933-NA",
+      "deposits": 0.0,
+      "withdrawals": 13500.0,
+      "balance": 336069.04,
+      "cheque_reference": "0000358011020933"
+    },
+    {
+      "date": "14/08/23",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-AUG 2023",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 311069.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "28/08/23",
+      "mode": "",
+      "particulars": "STMT CHGS NET/MBL INCL GST 130723-MIR242",
+      "deposits": 0.0,
+      "withdrawals": 35.4,
+      "balance": 311033.64,
+      "cheque_reference": "MIR2423857458818"
+    },
+    {
+      "date": "03/09/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-324613712710-NA",
+      "deposits": 11000.0,
+      "withdrawals": 0.0,
+      "balance": 357033.64,
+      "cheque_reference": "0000324613712710"
+    },
+    {
+      "date": "14/09/23",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-SEP 2023",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 332033.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "01/10/23",
+      "mode": "",
+      "particulars": "CREDIT INTEREST CAPITALISED",
+      "deposits": 2518.0,
+      "withdrawals": 0.0,
+      "balance": 334551.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "03/10/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-33861590931DC ANITA JAIN SEP SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 369551.64,
+      "cheque_reference": "00033861590931DC"
+    },
+    {
+      "date": "03/10/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-HDFC0 001666-327621115603-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 383051.64,
+      "cheque_reference": "0000327621115603"
+    },
+    {
+      "date": "09/10/23",
+      "mode": "",
+      "particulars": "FD THROUGH NET-50300869628899:ANITA JAIN",
+      "deposits": 0.0,
+      "withdrawals": 225000.0,
+      "balance": 158051.64,
+      "cheque_reference": "IB09214056854574"
+    },
+    {
+      "date": "16/10/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-328914169691-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB KOTAK",
+      "deposits": 0.0,
+      "withdrawals": 100000.0,
+      "balance": 33051.64,
+      "cheque_reference": "0000328914169691"
+    },
+    {
+      "date": "31/10/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-330420145779-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB",
+      "deposits": 0.0,
+      "withdrawals": 20000.0,
+      "balance": 13051.64,
+      "cheque_reference": "0000330420145779"
+    },
+    {
+      "date": "01/11/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-330516169802-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB KOTAK",
+      "deposits": 0.0,
+      "withdrawals": 10000.0,
+      "balance": 3051.64,
+      "cheque_reference": "0000330516169802"
+    },
+    {
+      "date": "01/11/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-34211048151DC ANITA JAIN OCT SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 38051.64,
+      "cheque_reference": "00034211048151DC"
+    },
+    {
+      "date": "05/11/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-367512026004-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 51551.64,
+      "cheque_reference": "0000367512026004"
+    },
+    {
+      "date": "13/11/23",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-NOV 2023",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 26551.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "18/11/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-332209155181-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB",
+      "deposits": 0.0,
+      "withdrawals": 5000.0,
+      "balance": 21551.64,
+      "cheque_reference": "0000332209155181"
+    },
+    {
+      "date": "18/11/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-332209161998-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB",
+      "deposits": 0.0,
+      "withdrawals": 7500.0,
+      "balance": 14051.64,
+      "cheque_reference": "0000332209161998"
+    },
+    {
+      "date": "18/11/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-332211132175-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB",
+      "deposits": 0.0,
+      "withdrawals": 10000.0,
+      "balance": 4051.64,
+      "cheque_reference": "0000332211132175"
+    },
+    {
+      "date": "18/11/23",
+      "mode": "IMPS",
+      "particulars": "IMPS-332215167745-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB",
+      "deposits": 0.0,
+      "withdrawals": 4000.0,
+      "balance": 51.64,
+      "cheque_reference": "0000332215167745"
+    },
+    {
+      "date": "02/12/23",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-370207577566-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 13551.64,
+      "cheque_reference": "0000370207577566"
+    },
+    {
+      "date": "02/12/23",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-34555629981DC ANITA JAIN NOV SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 48551.64,
+      "cheque_reference": "00034555629981DC"
+    },
+    {
+      "date": "13/12/23",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-DEC 2023",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 23551.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "01/01/24",
+      "mode": "",
+      "particulars": "CREDIT INTEREST CAPITALISED",
+      "deposits": 509.0,
+      "withdrawals": 0.0,
+      "balance": 24060.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "01/01/24",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-34861771041DC ANITA JAIN DEC SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 59060.64,
+      "cheque_reference": "00034861771041DC"
+    },
+    {
+      "date": "03/01/24",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-436938612878-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 72560.64,
+      "cheque_reference": "0000436938612878"
+    },
+    {
+      "date": "13/01/24",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-JAN 2024",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 47560.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "16/01/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-401604130482-RISHAB KOTAK-KKBK-XXXX XX6281-RUSH",
+      "deposits": 0.0,
+      "withdrawals": 30000.0,
+      "balance": 17560.64,
+      "cheque_reference": "0000401604130482"
+    },
+    {
+      "date": "16/01/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-401605132727-RISHAB KOTAK-KKBK-XXXX XX6281-RR",
+      "deposits": 0.0,
+      "withdrawals": 10000.0,
+      "balance": 7560.64,
+      "cheque_reference": "0000401605132727"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300472484644",
+      "deposits": 500000.0,
+      "withdrawals": 0.0,
+      "balance": 507560.64,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300472484644",
+      "deposits": 72393.2,
+      "withdrawals": 0.0,
+      "balance": 579953.84,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300809761717",
+      "deposits": 950000.0,
+      "withdrawals": 0.0,
+      "balance": 1529953.84,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300809761717",
+      "deposits": 27219.5,
+      "withdrawals": 0.0,
+      "balance": 1557173.34,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300809763242",
+      "deposits": 350000.0,
+      "withdrawals": 0.0,
+      "balance": 1907173.34,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300809763242",
+      "deposits": 10028.7,
+      "withdrawals": 0.0,
+      "balance": 1917202.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300809763901",
+      "deposits": 450000.0,
+      "withdrawals": 0.0,
+      "balance": 2367202.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300809763901",
+      "deposits": 12894.4,
+      "withdrawals": 0.0,
+      "balance": 2380096.44,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300869628899",
+      "deposits": 225000.0,
+      "withdrawals": 0.0,
+      "balance": 2605096.44,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300869628899",
+      "deposits": 2184.1,
+      "withdrawals": 0.0,
+      "balance": 2607280.54,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT PRINCIPAL-50300391872114",
+      "deposits": 150000.0,
+      "withdrawals": 0.0,
+      "balance": 2757280.54,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "IB FD PREMAT INT PAID-50300391872114",
+      "deposits": 31761.5,
+      "withdrawals": 0.0,
+      "balance": 2789042.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-402323131534-SHIKHA-HDFC-XXXXXXXXXX 6763-ANITA HAIN",
+      "deposits": 0.0,
+      "withdrawals": 500000.0,
+      "balance": 2289042.04,
+      "cheque_reference": "0000402323131534"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-402323131592-SHIKHA-HDFC-XXXXXXXXXX 6763-ANITA JAIN",
+      "deposits": 0.0,
+      "withdrawals": 500000.0,
+      "balance": 1789042.04,
+      "cheque_reference": "0000402323131592"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "50100110706763-TPT-ANITA JAIN-SHIKHA JAI N",
+      "deposits": 0.0,
+      "withdrawals": 500000.0,
+      "balance": 1289042.04,
+      "cheque_reference": "0000000303490873"
+    },
+    {
+      "date": "23/01/24",
+      "mode": "",
+      "particulars": "50100110706763-TPT-ANITA JAIN-SHIKHA JAI N",
+      "deposits": 0.0,
+      "withdrawals": 500000.0,
+      "balance": 789042.04,
+      "cheque_reference": "0000000303501403"
+    },
+    {
+      "date": "28/01/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-402813184381-SHIKHA-HDFC-XXXXXXXXXX 6763-ANITA JAIN",
+      "deposits": 0.0,
+      "withdrawals": 500000.0,
+      "balance": 289042.04,
+      "cheque_reference": "0000402813184381"
+    },
+    {
+      "date": "28/01/24",
+      "mode": "",
+      "particulars": "50100110706763-TPT-ANITA JAIN-SHIKHA JAI N",
+      "deposits": 0.0,
+      "withdrawals": 225000.0,
+      "balance": 64042.04,
+      "cheque_reference": "0000000264320480"
+    },
+    {
+      "date": "03/02/24",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-35194885991DC ANITA JAIN JAN SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 99042.04,
+      "cheque_reference": "00035194885991DC"
+    },
+    {
+      "date": "04/02/24",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-440107839165-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 112542.04,
+      "cheque_reference": "0000440107839165"
+    },
+    {
+      "date": "08/02/24",
+      "mode": "TRANSFER",
+      "particulars": "CHQ DEP - TRANSFER OW 1 - NOIDA WBO: SAN JEEV KUMAR JAIN ABHA JAIN :HDFC BANK LTD",
+      "deposits": 200000.0,
+      "withdrawals": 0.0,
+      "balance": 312542.04,
+      "cheque_reference": "0000000000000070"
+    },
+    {
+      "date": "12/02/24",
+      "mode": "IMPS",
+      "particulars": "IMPS-404317194185-RISHAB KOTAK-KKBK-XXXX XX6281-RISHAB KOTAK",
+      "deposits": 0.0,
+      "withdrawals": 10000.0,
+      "balance": 302542.04,
+      "cheque_reference": "0000404317194185"
+    },
+    {
+      "date": "14/02/24",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-FEB 2024",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 277542.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "01/03/24",
+      "mode": "NEFT",
+      "particulars": "NEFT CR-ICIC0SF0002-AABIPORT ACTIVE HAUL -ANITA JAIN-35471024321DC ANITA JAIN FEB SALARY",
+      "deposits": 35000.0,
+      "withdrawals": 0.0,
+      "balance": 312542.04,
+      "cheque_reference": "00035471024321DC"
+    },
+    {
+      "date": "03/03/24",
+      "mode": "UPI",
+      "particulars": "UPI-CHANDAN KUMAR-8383876178@PAYTM-UTIB0 003357-406317789046-NA",
+      "deposits": 13500.0,
+      "withdrawals": 0.0,
+      "balance": 326042.04,
+      "cheque_reference": "0000406317789046"
+    },
+    {
+      "date": "13/03/24",
+      "mode": "",
+      "particulars": "50400318370622- RD INSTALLMENT-MAR 2024",
+      "deposits": 0.0,
+      "withdrawals": 25000.0,
+      "balance": 301042.04,
+      "cheque_reference": "000000000000000"
+    },
+    {
+      "date": "01/04/24",
+      "mode": "",
+      "particulars": "CREDIT INTEREST CAPITALISED",
+      "deposits": 1950.0,
+      "withdrawals": 0.0,
+      "balance": 302992.04,
+      "cheque_reference": "000000000000000"
+    }
+  ],
+  "total_transactions": 75,
+  "balance_mismatch": true,
+  "formatted_at": "2025-09-25T18:46:14.561859"
+}
